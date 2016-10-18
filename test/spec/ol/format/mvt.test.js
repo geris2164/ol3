@@ -3,10 +3,13 @@ goog.provide('ol.test.format.MVT');
 goog.require('ol.Feature');
 goog.require('ol.ext.pbf');
 goog.require('ol.ext.vectortile');
+goog.require('ol.featureloader');
 goog.require('ol.format.MVT');
+goog.require('ol.proj');
 goog.require('ol.render.Feature');
+goog.require('ol.VectorTile');
 
-where('ArrayBuffer').describe('ol.format.MVT', function() {
+where('ArrayBuffer.isView').describe('ol.format.MVT', function() {
 
   var data;
   beforeEach(function(done) {
@@ -78,6 +81,24 @@ where('ArrayBuffer').describe('ol.format.MVT', function() {
       });
       var features = format.readFeatures(data);
       expect(features[0].getId()).to.be(2);
+    });
+
+  });
+
+  describe('ol.featureloader.tile', function() {
+
+    it('sets features on the tile and updates proj units', function(done) {
+      var tile = new ol.VectorTile([0, 0, 0], undefined, undefined, undefined,
+          undefined, ol.proj.get('EPSG:3857'));
+      var url = 'spec/ol/data/14-8938-5680.vector.pbf';
+      var format = new ol.format.MVT();
+      var loader = ol.featureloader.tile(url, format);
+      ol.events.listen(tile, 'change', function(e) {
+        expect(tile.getFeatures().length).to.be.greaterThan(0);
+        expect(tile.getProjection().getUnits()).to.be('tile-pixels');
+        done();
+      });
+      loader.call(tile, [], 1, ol.proj.get('EPSG:3857'));
     });
 
   });

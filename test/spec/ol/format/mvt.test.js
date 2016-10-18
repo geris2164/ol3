@@ -88,8 +88,7 @@ where('ArrayBuffer.isView').describe('ol.format.MVT', function() {
   describe('ol.featureloader.tile', function() {
 
     it('sets features on the tile and updates proj units', function(done) {
-      var tile = new ol.VectorTile([0, 0, 0], undefined, undefined, undefined,
-          undefined, ol.proj.get('EPSG:3857'));
+      var tile = new ol.VectorTile([0, 0, 0]);
       var url = 'spec/ol/data/14-8938-5680.vector.pbf';
       var format = new ol.format.MVT();
       var loader = ol.featureloader.tile(url, format);
